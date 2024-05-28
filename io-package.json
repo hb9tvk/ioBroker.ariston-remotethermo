@@ -1,0 +1,83 @@
+{
+    "common": {
+        "name": "ariston-remotethermo",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Ariston Boiler",
+        "titleLang": {
+            "en": "Ariston Boiler",
+            "de": "Ariston Boiler",
+            "ru": "Ariston Boiler",
+            "pt": "Ariston Boiler",
+            "nl": "Ariston Boiler",
+            "fr": "Ariston Boiler",
+            "it": "Ariston Boiler",
+            "es": "Ariston Boiler",
+            "pl": "Ariston Boiler",
+            "zh-cn": "Ariston Boiler"
+        },
+        "desc": {
+            "en": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "de": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "ru": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "pt": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "nl": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "fr": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "it": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "es": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "pl": "Adapter for Ariston Water Heaters via Ariston-NET API",
+            "zh-cn": "Adapter for Ariston Water Heaters via Ariston-NET API"
+        },
+        "authors": [
+            "hb9tvk <peter@kohler.name>"
+        ],
+        "keywords": [
+            "boiler"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "ariston-remotethermo.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/hb9tvk/ioBroker.ariston-remotethermo/main/admin/ariston-remotethermo.png",
+        "readme": "https://github.com/hb9tvk/ioBroker.ariston-remotethermo/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "climate-control",
+        "compact": true,
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=3.3.22"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.1.13"
+            }
+        ]
+    },
+    "native": {
+        "email": "",
+        "password": ""
+    },
+    "objects": [],
+    "instanceObjects": []
+}

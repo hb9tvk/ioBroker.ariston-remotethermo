@@ -1,0 +1,53 @@
+{
+    "expert": "no",
+    "cli": false,
+    "adapterName": "ariston-remotethermo",
+    "title": "Ariston Boiler",
+    "description": "Adapter for Ariston Water Heaters via Ariston-NET API",
+    "keywords": [
+        "boiler"
+    ],
+    "contributors": "",
+    "authorName": "hb9tvk",
+    "authorGithub": "hb9tvk",
+    "authorEmail": "peter@kohler.name",
+    "icon": {
+        "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAxCAYAAAB3aZEhAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAALlSURBVGhD7ZjdS5NRHMf7E4ogqCAqiorKgugFSTOT7K4grKygLqqbAou86AWK3iQQKqiQiIrKlIjSusubwi5aewud4dS1NSbObc1czM2Z85en57eOrt82z55n66HOFz7gfL7n5eN2tsdNM0wvgH8FKaNXpIxekTJ6RcqI4Dp5Bdxna8G8oIi8riU5kzHNK4TQWwMkMmSzg3n+RrKrFTmRsa4oh0inAzV4Yl4/fNp2gByjBZrL2EorYcQfxO3TcVXXkGPVoqlM177jEI8O45Z5fgwM4k883rp6cg41aCbjPn8dt8kzGh4Ce8VRsC7fCpFuJ/6WJ9j0Gj7MXE3Olw2qZdhmAo2vcHs8sV4vtK3d/rtnmrsBvrW04lWewTfvwTh73aQ5s0WVDNtgqNWI2+IJWzrAvLCYHNN34z62eKION7QX7iT7ImQtY11WBhH7Z9wOz6+Xzqw15JgEjsOnsc0z+j0MHWX7yf5UyUrGVrIHRnxfcRuYsTHwXLpJ9ilSves5T1wk+1NBWMa++9gf71jscdfeKrKfDuvSLRBu68RZeLx3Gsh+JoRkug9W43I87IPQVryL7DPYnUC6lw87/OylmRx2Fql+OoRkfA+e4VJK2F/VsqSU7DI+riyHaLcL4sOxjM+c5/ItnJVH9H5OlYxxznqyx2gvqoCRwAA2xzN+pr6cqSW7CfyPm7CsxLJoE9lLhZjMw+e4jBKqw+jccQTikSi2Jqf/3lMwzFhFjuu/24gtJZbFJWQvFZrL9Bw6hVdTJ9jcQo7Nq4z/0QtcRgnVoQ4zFWqslJmAmEzSAaU6UgbJr0z9fybjqbkNoXemjFBj8yvzpBmXUUJ11CBlJiAkE2h4icsooTpqyK9M0r/HVEcNf/WZoQ62GmJ9PpxZSW5vNJPumnMd9h0DtY9UCMmwbyPzFfYBTe0hHUIyDNvmSnCfuwa9V+tyhrPqArl2JoRl9IyU0StSRq9IGb0iZfSKlNEnBfATyLWit+c9b8oAAAAASUVORK5CYII=",
+        "extension": "png"
+    },
+    "features": [
+        "adapter"
+    ],
+    "adminFeatures": [],
+    "type": "climate-control",
+    "startMode": "daemon",
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "connectionIndicator": "no",
+    "adapterSettings": [
+        {
+            "key": "email",
+            "label": "Email",
+            "inputType": "text",
+            "defaultValue": ""
+        },
+        {
+            "key": "password",
+            "label": "Password",
+            "inputType": "text",
+            "defaultValue": ""
+        }
+    ],
+    "language": "JavaScript",
+    "adminUi": "json",
+    "releaseScript": "yes",
+    "indentation": "Space (4)",
+    "quotes": "single",
+    "tools": [
+        "ESLint",
+        "type checking"
+    ],
+    "license": "MIT License",
+    "target": "github",
+    "creatorVersion": "2.3.0"
+}

@@ -1,0 +1,16 @@
+{
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "email": {
+            "type": "text",
+            "label": "Email",
+            "newLine": true
+        },
+        "password": {
+            "type": "text",
+            "label": "Password",
+            "newLine": true
+        }
+    }
+}
