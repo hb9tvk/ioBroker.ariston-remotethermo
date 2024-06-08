@@ -74,10 +74,141 @@
             }
         ]
     },
+    "encryptedNative": [
+      "password"
+    ],
+    "protectedNative": [
+      "password"
+    ],
     "native": {
         "email": "",
         "password": ""
     },
     "objects": [],
-    "instanceObjects": []
+    "instanceObjects": [
+        {
+            "_id": "boiler",
+            "type": "channel",
+            "common": {
+              "name": "Boiler"
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.waterTemp",
+            "type": "state",
+            "common": {
+              "name": "waterTemp",
+              "type": "number",
+              "role": "value.temperature",
+              "read": true,
+              "write": false,
+              "unit": "°C",
+              "def": 0,
+              "desc": {
+                "en": "Current Water Temperature"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.comfortTemp",
+            "type": "state",
+            "common": {
+              "name": "comfortTemp",
+              "type": "number",
+              "read": true,
+              "write": true,
+              "unit": "°C",
+              "desc": {
+                "en": "Selected Water Temperature"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.mode",
+            "type": "state",
+            "common": {
+              "name": "mode",
+              "type": "number",
+              "read": true,
+              "write": true,
+              "desc": {
+                "en": "Mode"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.opMode",
+            "type": "state",
+            "common": {
+              "name": "opMode",
+              "type": "number",
+              "read": true,
+              "write": true,
+              "desc": {
+                "en": "OP Mode"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.boostOn",
+            "type": "state",
+            "common": {
+              "name": "boostOn",
+              "type": "boolean",
+              "read": true,
+              "write": true,
+              "desc": {
+                "en": "Boost"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.hpState",
+            "type": "state",
+            "common": {
+              "name": "hpState",
+              "type": "number",
+              "read": true,
+              "write": false,
+              "desc": {
+                "en": "Heat Pump State"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.on",
+            "type": "state",
+            "common": {
+              "name": "on",
+              "type": "boolean",
+              "read": true,
+              "write": true,
+              "desc": {
+                "en": "On"
+              }
+            },
+            "native": {}
+        },
+        {
+            "_id": "boiler.gw",
+            "type": "state",
+            "common": {
+              "name": "gateway_id",
+              "type": "string",
+              "read": true,
+              "write": false,
+              "desc": {
+                "en": "Gateway ID"
+              }
+            },
+            "native": {}
+        }    
+    ]
 }

@@ -10,12 +10,226 @@ const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
+const axios = require('axios');
 
 /**
  * The adapter instance
  * @type {ioBroker.Adapter}
  */
 let adapter;
+let authToken="";
+let gw="";
+let currentComfortTemp=0;
+
+function updateBoiler() {
+    adapter.log.info('updateBoiler');
+    if (gw=="") {
+        adapter.log.debug('gateway not set, reschedule 10s');
+        setTimeout(updateBoiler,10000);
+        return;
+    }
+    
+
+    let url='https://www.ariston-net.remotethermo.com/api/v2/velis/slpPlantData/' +
+        gw + '?umSys=si';
+
+    axios.get(url, {
+        headers: {
+            'Ar.authtoken': authToken
+        }
+    }).then(function (response) {
+        if (response.status==200) {
+            adapter.log.debug("Got waterTemp from ariston-net: " + response.data.waterTemp);
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.waterTemp", 
+                {val: response.data.waterTemp, ack: true});
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.comfortTemp",
+                {val: response.data.comfortTemp, ack: true});
+            currentComfortTemp=response.data.comfortTemp;
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.mode",
+                {val: response.data.mode, ack: true});
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.opMode",
+                {val: response.data.opMode, ack: true});
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.boostOn",
+                {val: response.data.boostOn, ack: true});
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.hpState",
+                {val: response.data.hpState, ack: true});
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
+                {val: response.data.on, ack: true});
+            setTimeout(() => updateBoiler(),300000);
+        } else {
+            adapter.log.error("API returned status " + response.status);
+            adapter.log.error(response.data);
+            setTimeout(updateBoiler,300000);
+        }
+    })
+    .catch(function (error) {
+        if (error.response.status==429) {
+            var secs=error.response.data.match(/\d+/)[0];
+            adapter.log.info(`Got throttled ${secs} seconds`);
+            adapter.log.debug(`Rescheduling updateBoiler ${secs} seconds`);
+            setTimeout(updateBoiler,(secs+1) * 1000);
+        }
+    })
+}
+
+function getGateway() {
+
+    if (authToken=="") {
+        adapter.log.debug("getGateway(): AuthToken not yet obtained");
+        // wait 10 and check if authToken arrived
+        setTimeout(() => getGateway(),10000);
+        return;
+    }
+
+    adapter.log.info('Fetching gateway ID');
+    axios.get('https://www.ariston-net.remotethermo.com/api/v2/velis/plants', {
+        headers: {
+            'Ar.authtoken': authToken
+        }
+    }).then(function (response) {
+        if (response.status==200) {
+            gw=response.data[0].gw;
+            adapter.log.info(`Got GatewayID: ${gw}`);
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.gw", 
+                {val: response.data[0].gw, ack: true});
+        } else {
+            adapter.log.info("return code " + response.status);
+        }
+    }).catch(function (error) {
+        // console.log(error);
+        if (error.response.status==429) {
+            var secs=error.response.data.match(/\d+/)[0];
+            adapter.log.info(`getGateway(): Got throttled ${secs} seconds`);
+            adapter.log.debug(`Rescheduling getGateway ${secs} seconds`);
+            setTimeout(getGateway,(secs+1) * 1000);
+        }
+    })
+}
+
+function updateComfortTemp(newTemp) {
+
+    if (currentComfortTemp==0 || gw=="") return;
+
+    let update={
+        "new": {
+            "comfort": newTemp,
+            "reduced": 0.0
+        },
+        "old": {
+            "comfort": currentComfortTemp,
+            "reduced": 0.0
+        }
+    };
+
+    let url="https://www.ariston-net.remotethermo.com/api/v2/velis/slpPlantData/" +
+        gw + "/temperatures?umSys=si";
+    axios.post(url, update, {headers: {'Ar.authtoken': authToken}})
+      .then(function (response) {
+        if (response.status==200) {
+            adapter.log.info("Update comforTemp successful");
+            adapter.setStateAsync("ariston-remotethermo.0.boiler.comfortTemp",
+                {ack: true});
+        }
+      })
+      .catch(function (error) {
+        if (error.response.status==429) {
+            var secs=error.response.data.match(/\d+/)[0];
+            adapter.log.info(`Got throttled ${secs} seconds`);
+            adapter.log.debug(`Rescheduling updateComfortTemp ${secs} seconds`);
+            setTimeout(function() { updateComfortTemp(newTemp);},(secs+1) * 1000);
+        }
+      });
+}
+
+function onOff(target) {
+
+    if (gw=="") return;
+
+    adapter.log.info("OnOff: " + target.toString());
+
+    let url="https://www.ariston-net.remotethermo.com/api/v2/velis/slpPlantData/" +
+    gw + "/switch";
+    adapter.log.info("Url: " + url);
+    axios.post(url, target.toString(), {headers: {'Ar.authtoken': authToken, 'Content-Type': 'application/json'}})
+    .then(function (response) {
+        if (response.status==200) {
+           if (target) 
+              adapter.log.info("Boiler switched on");
+          else
+             adapter.log.info("Boiler switched off");
+        adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
+            {ack: true});
+        console.log(response);
+    }
+  })
+  .catch(function (error) {
+    if (error.response.status==429) {
+        var secs=error.response.data.match(/\d+/)[0];
+        adapter.log.info(`Got throttled ${secs} seconds`);
+        adapter.log.debug(`Rescheduling onOff ${secs} seconds`);
+        setTimeout(function() { onOff(target); },(secs+1) * 1000);
+    }
+  });
+}
+
+function boost(target) {
+    if (gw=="") return;
+ 
+    let state="false";
+    if (target=true) state="true";
+
+    let url="https://www.ariston-net.remotethermo.com/api/v2/velis/slpPlantData/" +
+        gw + "/boost";
+    axios.post(url, state, {headers: {'Ar.authtoken': authToken}})
+    .then(function (response) {
+        if (response.status==200) {
+            if (target) 
+                adapter.log.info("Boiler boost on");
+            else
+                adapter.log.info("Boiler boost off");
+        adapter.setStateAsync("ariston-remotethermo.0.boiler.boostOn",
+            {ack: true});
+    }
+  })
+  .catch(function (error) {
+    if (error.response.status==429) {
+        var secs=error.response.data.match(/\d+/)[0];
+        adapter.log.info(`Got throttled ${secs} seconds`);
+        adapter.log.debug(`Rescheduling boost ${secs} seconds`);
+        setTimeout(function() {boost(target);},(secs+1) * 1000);
+    }
+  });
+}
+
+function loginBoiler() {
+
+    if (adapter.config.password=="" || adapter.config.email=="") {
+        adapter.log.error("Login Data missing...");
+        return;
+    }
+    
+    axios.post('https://www.ariston-net.remotethermo.com/api/v2/accounts/login', {
+        usr: adapter.config.email,
+        pwd: adapter.config.password,
+        imp: false,
+        notTrack: true,
+        appInfo: {
+            os: 2,
+            appVer: "5.6.772.40151",
+            appId: "com.remotethermo.aristonnet"
+        }
+      })
+      .then(function (response) {
+        if (response.status==200 && 'token' in response.data) {
+            adapter.log.info("Login Successful, got token");
+            authToken=response.data.token;
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}
+
 
 /**
  * Starts the adapter instance
@@ -62,6 +276,16 @@ function startAdapter(options) {
             if (state) {
                 // The state was changed
                 adapter.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+                if (id == "ariston-remotethermo.0.boiler.comfortTemp" && state.ack == false) {
+                    adapter.log.info(`New comfort temp requested: ${state.val}`);
+                    updateComfortTemp(state.val);
+                }
+                if (id == "ariston-remotethermo.0.boiler.on" && state.ack == false) {
+                    onOff(state.val);
+                }
+                if (id == "ariston-remotethermo.0.boiler.boostOn" && state.ack == false) {
+                    boost(state.val);
+                }
             } else {
                 // The state was deleted
                 adapter.log.info(`state ${id} deleted`);
@@ -91,28 +315,29 @@ async function main() {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
-    adapter.log.info('config email: ' + adapter.config.email);
-    adapter.log.info('config password: ' + adapter.config.password);
+    // adapter.log.info('config email: ' + adapter.config.email);
+    // adapter.log.info('config password: ' + adapter.config.password);
 
     /*
         For every state in the system there has to be also an object of type state
         Here a simple template for a boolean variable named "testVariable"
         Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
     */
-    await adapter.setObjectNotExistsAsync('testVariable', {
-        type: 'state',
-        common: {
-            name: 'testVariable',
-            type: 'boolean',
-            role: 'indicator',
-            read: true,
-            write: true,
-        },
-        native: {},
-    });
+    // await adapter.setObjectNotExistsAsync('testVariable', {
+    //     type: 'state',
+    //     common: {
+    //         name: 'testVariable',
+    //         type: 'boolean',
+    //         role: 'indicator',
+    //         read: true,
+    //         write: true,
+    //     },
+    //     native: {},
+    // });
+
 
     // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-    adapter.subscribeStates('testVariable');
+    // adapter.subscribeStates('testVariable');
     // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
     // adapter.subscribeStates('lights.*');
     // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -123,23 +348,31 @@ async function main() {
         you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
     */
     // the variable testVariable is set to true as command (ack=false)
-    await adapter.setStateAsync('testVariable', true);
+    // await adapter.setStateAsync('testVariable', true);
 
     // same thing, but the value is flagged "ack"
     // ack should be always set to true if the value is received from or acknowledged from the target system
-    await adapter.setStateAsync('testVariable', { val: true, ack: true });
+    // await adapter.setStateAsync('testVariable', { val: true, ack: true });
 
     // same thing, but the state is deleted after 30s (getState will return null afterwards)
-    await adapter.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
+    // await adapter.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
 
     // examples for the checkPassword/checkGroup functions
-    adapter.checkPassword('admin', 'iobroker', (res) => {
-        adapter.log.info('check user admin pw iobroker: ' + res);
-    });
+    // adapter.checkPassword('admin', 'iobroker', (res) => {
+    //     adapter.log.info('check user admin pw iobroker: ' + res);
+    // });
 
-    adapter.checkGroup('admin', 'admin', (res) => {
-        adapter.log.info('check group user admin group admin: ' + res);
-    });
+    // adapter.checkGroup('admin', 'admin', (res) => {
+    //     adapter.log.info('check group user admin group admin: ' + res);
+    // });
+
+    adapter.subscribeStates('ariston-remotethermo.0.boiler.comfortTemp');
+    adapter.subscribeStates('ariston-remotethermo.0.boiler.on');
+    adapter.subscribeStates('ariston-remotethermo.0.boiler.boostOn');
+
+    loginBoiler();
+    getGateway();
+    updateBoiler();
 }
 
 if (require.main !== module) {
