@@ -96,7 +96,6 @@ function getGateway() {
             adapter.log.info("return code " + response.status);
         }
     }).catch(function (error) {
-        // console.log(error);
         if (error.response.status==429) {
             var secs=error.response.data.match(/\d+/)[0];
             adapter.log.info(`getGateway(): Got throttled ${secs} seconds`);
@@ -159,7 +158,6 @@ function onOff(target) {
              adapter.log.info("Boiler switched off");
         adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
             {ack: true});
-        console.log(response);
     }
   })
   .catch(function (error) {
@@ -226,7 +224,7 @@ function loginBoiler() {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        adapter.log.error(error.response.data);
       });
 }
 
