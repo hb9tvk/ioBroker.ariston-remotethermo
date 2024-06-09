@@ -21,6 +21,15 @@ let authToken="";
 let gw="";
 let currentComfortTemp=0;
 
+function updateState(StateID, value) {
+
+    adapter.getState(StateID, function(err,state) {
+        if (state.val!=value) {
+            adapter.setStateAsync(StateID, {val: value, ack: true});
+        }
+    });
+}
+
 function updateBoiler() {
 
     adapter.log.debug("updateBoiler()");
@@ -29,7 +38,7 @@ function updateBoiler() {
         adapter.log.debug("Not logged in yet, attempting login");
         loginBoiler();
         // speed up if not yet logged in
-        setTimeout(() => { updateBoiler(); },10000);
+        // setTimeout(() => { updateBoiler(); },10000);
         return;
     }
     if (gw=="") {
@@ -47,24 +56,15 @@ function updateBoiler() {
     }).then(function (response) {
         if (response.status==200) {
             adapter.log.debug("Got waterTemp from ariston-net: " + response.data.waterTemp);
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.waterTemp", 
-                {val: response.data.waterTemp, ack: true});
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.comfortTemp",
-                {val: response.data.comfortTemp, ack: true});
-            currentComfortTemp=response.data.comfortTemp;
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.mode",
-                {val: response.data.mode, ack: true});
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.opMode",
-                {val: response.data.opMode, ack: true});
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.boostOn",
-                {val: response.data.boostOn, ack: true});
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.hpState",
-                {val: response.data.hpState, ack: true});
-            adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
-                {val: response.data.on, ack: true});
+            updateState("ariston-remotethermo.0.boiler.waterTemp", response.data.waterTemp);
+            updateState("ariston-remotethermo.0.boiler.comfortTemp", response.data.comfortTemp);
+            updateState("ariston-remotethermo.0.boiler.mode", response.data.mode);
+            updateState("ariston-remotethermo.0.boiler.opMode", response.data.opMode);
+            updateState("ariston-remotethermo.0.boiler.boostOn", response.data.boostOn);
+            updateState("ariston-remotethermo.0.boiler.hpState", response.data.hpState);
+            updateState("ariston-remotethermo.0.boiler.on", response.data.on);
         } else {
             adapter.log.error("API returned status " + response.status);
-            adapter.log.error(response.data);
         }
     })
     .catch(function (error) {
@@ -73,6 +73,8 @@ function updateBoiler() {
             adapter.log.info(`Got throttled ${secs} seconds`);
             adapter.log.debug(`Rescheduling updateBoiler ${secs} seconds`);
             setTimeout(() => { updateBoiler(); },(parseInt(secs)+1)*1000);
+        } else {
+            adapter.log.error("API returned status " + error.response.status);
         }
     })
 }
@@ -108,7 +110,7 @@ function getGateway() {
 
 function updateComfortTemp(newTemp) {
 
-    if (currentComfortTemp==0 || gw=="") return;
+    if (gw=="") return;
 
     let update={
         "new": {
@@ -126,7 +128,7 @@ function updateComfortTemp(newTemp) {
     axios.post(url, update, {headers: {'Ar.authtoken': authToken}})
       .then(function (response) {
         if (response.status==200) {
-            adapter.log.info("Update comforTemp successful");
+            adapter.log.info("Update comfortTemp successful");
             adapter.setStateAsync("ariston-remotethermo.0.boiler.comfortTemp",
                 {ack: true});
         }
@@ -276,7 +278,7 @@ function startAdapter(options) {
         stateChange: (id, state) => {
             if (state) {
                 // The state was changed
-                adapter.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+                adapter.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
                 if (id == "ariston-remotethermo.0.boiler.comfortTemp" && state.ack == false) {
                     adapter.log.info(`New comfort temp requested: ${state.val}`);
                     updateComfortTemp(state.val);
