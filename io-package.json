@@ -100,7 +100,6 @@
             "common": {
               "name": "waterTemp",
               "type": "number",
-              "role": "value.temperature",
               "read": true,
               "write": false,
               "unit": "°C",

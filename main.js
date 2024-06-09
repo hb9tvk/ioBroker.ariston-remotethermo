@@ -22,14 +22,21 @@ let gw="";
 let currentComfortTemp=0;
 
 function updateBoiler() {
-    adapter.log.info('updateBoiler');
+
+    adapter.log.debug("updateBoiler()");
+
+    if (authToken=="") {
+        adapter.log.debug("Not logged in yet, attempting login");
+        loginBoiler();
+        // speed up if not yet logged in
+        setTimeout(() => { updateBoiler(); },10000);
+        return;
+    }
     if (gw=="") {
-        adapter.log.debug('gateway not set, reschedule 10s');
-        setTimeout(updateBoiler,10000);
+        adapter.log.debug('Gateway not set yet, waiting...');
         return;
     }
     
-
     let url='https://www.ariston-net.remotethermo.com/api/v2/velis/slpPlantData/' +
         gw + '?umSys=si';
 
@@ -55,11 +62,9 @@ function updateBoiler() {
                 {val: response.data.hpState, ack: true});
             adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
                 {val: response.data.on, ack: true});
-            setTimeout(() => updateBoiler(),300000);
         } else {
             adapter.log.error("API returned status " + response.status);
             adapter.log.error(response.data);
-            setTimeout(updateBoiler,300000);
         }
     })
     .catch(function (error) {
@@ -67,21 +72,15 @@ function updateBoiler() {
             var secs=error.response.data.match(/\d+/)[0];
             adapter.log.info(`Got throttled ${secs} seconds`);
             adapter.log.debug(`Rescheduling updateBoiler ${secs} seconds`);
-            setTimeout(updateBoiler,(secs+1) * 1000);
+            setTimeout(() => { updateBoiler(); },(parseInt(secs)+1)*1000);
         }
     })
 }
 
 function getGateway() {
 
-    if (authToken=="") {
-        adapter.log.debug("getGateway(): AuthToken not yet obtained");
-        // wait 10 and check if authToken arrived
-        setTimeout(() => getGateway(),10000);
-        return;
-    }
+    adapter.log.info('getGateway()');
 
-    adapter.log.info('Fetching gateway ID');
     axios.get('https://www.ariston-net.remotethermo.com/api/v2/velis/plants', {
         headers: {
             'Ar.authtoken': authToken
@@ -92,6 +91,8 @@ function getGateway() {
             adapter.log.info(`Got GatewayID: ${gw}`);
             adapter.setStateAsync("ariston-remotethermo.0.boiler.gw", 
                 {val: response.data[0].gw, ack: true});
+            // everything's ready now, fetch status from API
+            updateBoiler();
         } else {
             adapter.log.info("return code " + response.status);
         }
@@ -100,7 +101,7 @@ function getGateway() {
             var secs=error.response.data.match(/\d+/)[0];
             adapter.log.info(`getGateway(): Got throttled ${secs} seconds`);
             adapter.log.debug(`Rescheduling getGateway ${secs} seconds`);
-            setTimeout(getGateway,(secs+1) * 1000);
+            setTimeout(() => { getGateway(); },(parseInt(secs)+1)*1000);
         }
     })
 }
@@ -135,7 +136,7 @@ function updateComfortTemp(newTemp) {
             var secs=error.response.data.match(/\d+/)[0];
             adapter.log.info(`Got throttled ${secs} seconds`);
             adapter.log.debug(`Rescheduling updateComfortTemp ${secs} seconds`);
-            setTimeout(function() { updateComfortTemp(newTemp);},(secs+1) * 1000);
+            setTimeout(() => { updateComfortTemp(newTemp);},(parseInt(secs)+1) * 1000);
         }
       });
 }
@@ -165,7 +166,7 @@ function onOff(target) {
         var secs=error.response.data.match(/\d+/)[0];
         adapter.log.info(`Got throttled ${secs} seconds`);
         adapter.log.debug(`Rescheduling onOff ${secs} seconds`);
-        setTimeout(function() { onOff(target); },(secs+1) * 1000);
+        setTimeout(() => { onOff(target); },(parseInt(secs)+1) * 1000);
     }
   });
 }
@@ -194,7 +195,7 @@ function boost(target) {
         var secs=error.response.data.match(/\d+/)[0];
         adapter.log.info(`Got throttled ${secs} seconds`);
         adapter.log.debug(`Rescheduling boost ${secs} seconds`);
-        setTimeout(function() {boost(target);},(secs+1) * 1000);
+        setTimeout(() => {boost(target);},(parseInt(secs)+1) * 1000);
     }
   });
 }
@@ -221,6 +222,8 @@ function loginBoiler() {
         if (response.status==200 && 'token' in response.data) {
             adapter.log.info("Login Successful, got token");
             authToken=response.data.token;
+            // now fetch gateway ID
+            getGateway();
         }
       })
       .catch(function (error) {
@@ -368,9 +371,8 @@ async function main() {
     adapter.subscribeStates('ariston-remotethermo.0.boiler.on');
     adapter.subscribeStates('ariston-remotethermo.0.boiler.boostOn');
 
-    loginBoiler();
-    getGateway();
     updateBoiler();
+    setInterval(updateBoiler,300000);
 }
 
 if (require.main !== module) {
