@@ -100,6 +100,7 @@
             "common": {
               "name": "waterTemp",
               "type": "number",
+              "role": "value.temperature",
               "read": true,
               "write": false,
               "unit": "°C",
@@ -116,6 +117,7 @@
             "common": {
               "name": "comfortTemp",
               "type": "number",
+              "role": "level.temperature",
               "read": true,
               "write": true,
               "unit": "°C",
@@ -131,6 +133,7 @@
             "common": {
               "name": "mode",
               "type": "number",
+              "role": "info.status",
               "read": true,
               "write": true,
               "desc": {
@@ -145,6 +148,7 @@
             "common": {
               "name": "opMode",
               "type": "number",
+              "role": "info.status",
               "read": true,
               "write": true,
               "desc": {
@@ -159,6 +163,7 @@
             "common": {
               "name": "boostOn",
               "type": "boolean",
+              "role": "switch.mode.boost",
               "read": true,
               "write": true,
               "desc": {
@@ -173,6 +178,7 @@
             "common": {
               "name": "hpState",
               "type": "number",
+              "role": "info.status",
               "read": true,
               "write": false,
               "desc": {
@@ -187,6 +193,7 @@
             "common": {
               "name": "on",
               "type": "boolean",
+              "role": "switch.power",
               "read": true,
               "write": true,
               "desc": {
@@ -201,6 +208,7 @@
             "common": {
               "name": "gateway_id",
               "type": "string",
+              "role": "text",
               "read": true,
               "write": false,
               "desc": {

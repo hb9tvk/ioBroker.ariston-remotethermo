@@ -37,8 +37,6 @@ function updateBoiler() {
     if (authToken=="") {
         adapter.log.debug("Not logged in yet, attempting login");
         loginBoiler();
-        // speed up if not yet logged in
-        // setTimeout(() => { updateBoiler(); },10000);
         return;
     }
     if (gw=="") {
