@@ -24,7 +24,7 @@ let currentComfortTemp=0;
 function updateState(StateID, value) {
 
     adapter.getState(StateID, function(err,state) {
-        if (state.val!=value) {
+        if (state==null || state.val!=value) {
             adapter.setStateAsync(StateID, {val: value, ack: true});
         }
     });
