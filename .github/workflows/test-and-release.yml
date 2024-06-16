@@ -53,7 +53,7 @@ jobs:
 
   # Deploys the final package to NPM
   deploy:
-    needs: [adapter-tests]
+    needs: [check-and-lint, adapter-tests]
 
     # Trigger this step only when a commit on any branch is tagged with a version number
     if: |
