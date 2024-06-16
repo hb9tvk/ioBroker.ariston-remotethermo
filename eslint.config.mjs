@@ -50,4 +50,7 @@ export default [{
 
         semi: ["error", "always"],
     },
+    "parserOptions": {
+        "sourceType": "module"
+    }
 }];
