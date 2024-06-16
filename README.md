@@ -30,6 +30,8 @@ Polling interval: There is a rate limit on the API so it should not be polled to
 
 ### **WORK IN PROGRESS**
 
+- First published version
+
 ### 0.0.1
 
 - In development stage
