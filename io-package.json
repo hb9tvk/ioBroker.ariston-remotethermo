@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "ariston-remotethermo",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "news": {
+      "0.0.5": {
+        "en": "fixing lint and build tests\nupdated devenv to node 20.14.0",
+        "de": "befestigen von lint und bauversuchen\naktualisiert devenv zu knoten 20.14.0",
+        "ru": "фиксация линта и сборка тестов\nобновленный девенв к узлу 20.14.0",
+        "pt": "forro de fixação e testes de construção\natualizado devenv para o nó 20.14.0",
+        "nl": "bevestiging van plint- en bouwtests\nbijgewerkt devenv naar node 20.14.0",
+        "fr": "fixation de linte et essais de construction\nmise à jour devenv au node 20.14.0",
+        "it": "test di fissaggio e costruzione\naggiornato devenv al nodo 20.14.0",
+        "es": "fijar forro y construir pruebas\nactualizado devenv a nodo 20.14.0",
+        "pl": "badania ściernic i konstrukcji\nzaktualizowany devenv do węzła 20.14.0",
+        "uk": "фіксація провисання і складання випробувань\nоновлений devenv в вузол 20.14.0",
+        "zh-cn": "修复和构建测试\n更新为20.14.0节点"
+      },
       "0.0.4": {
         "en": "fixing npm dependencies",
         "de": "festlegung npm abhängigkeiten",
