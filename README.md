@@ -12,7 +12,19 @@
 
 ## ariston-remotethermo adapter for ioBroker
 
-Adapter for Ariston Water Heaters via Ariston-NET API
+Adapter for Ariston Water Heaters (https://www.ariston.com/en-uk/) via Ariston-NET API.
+
+In Switzerland, the devices are sold under the brand name 'domotec' (https://domotec.ch/produkte/warmwasser-waermepumpen-nuos-stand/)
+
+To use the API, a cloud account on Ariston-NET is required, and the water heater needs to be connected to WiFi and registered on Ariston-NET. (https://www.ariston-net.remotethermo.com/).
+
+Upon configuration of the adapter, the email address and password for the Ariston-NET needs to be supplied.
+
+Known working models
+
+* Domotec NUOS-III (probably same as Ariston NUOS PLUS WIFI)
+
+Polling interval: There is a rate limit on the API so it should not be polled too often. Currently the interval is hardcoded to 5min (300 sec) which seems to be ok. Might become configurable in a future release.
 
 ## Changelog
 <!--
@@ -20,8 +32,9 @@ Adapter for Ariston Water Heaters via Ariston-NET API
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
-* (hb9tvk) initial release
+### 0.0.1
+
+- In development stage
 
 ## License
 MIT License
