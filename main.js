@@ -16,20 +16,27 @@ const axios = require('axios');
  * The adapter instance
  * @type {ioBroker.Adapter}
  */
+
+// current poll period: 5min (300000ms)
+const UPDATE_PERIOD=300000;
 let adapter;
 let authToken="";
 let gw="";
 let currentComfortTemp=0;
+let boilerInterval;
 
+// Update state variable
 function updateState(StateID, value) {
 
     adapter.getState(StateID, function(err,state) {
+        // only update state upon change
         if (state==null || state.val!=value) {
             adapter.setStateAsync(StateID, {val: value, ack: true});
         }
     });
 }
 
+// Main loop, fetch data from boiler
 function updateBoiler() {
 
     adapter.log.debug("updateBoiler()");
@@ -54,6 +61,7 @@ function updateBoiler() {
     }).then(function (response) {
         if (response.status==200) {
             adapter.log.debug("Got waterTemp from ariston-net: " + response.data.waterTemp);
+            // update state with values received from API
             updateState("ariston-remotethermo.0.boiler.waterTemp", response.data.waterTemp);
             updateState("ariston-remotethermo.0.boiler.comfortTemp", response.data.comfortTemp);
             updateState("ariston-remotethermo.0.boiler.mode", response.data.mode);
@@ -61,25 +69,31 @@ function updateBoiler() {
             updateState("ariston-remotethermo.0.boiler.boostOn", response.data.boostOn);
             updateState("ariston-remotethermo.0.boiler.hpState", response.data.hpState);
             updateState("ariston-remotethermo.0.boiler.on", response.data.on);
+        } else if (response.status==405) {
+            adapter.log.info("updateBoiler(): Authentication expired, re-login");
+            loginBoiler();
         } else {
-            adapter.log.error("API returned status " + response.status);
+            adapter.log.error("updateBoiler(): Unexpected HTTP response code: " + response.status);
         }
     })
     .catch(function (error) {
         if (error.response.status==429) {
             var secs=error.response.data.match(/\d+/)[0];
-            adapter.log.info(`Got throttled ${secs} seconds`);
-            adapter.log.debug(`Rescheduling updateBoiler ${secs} seconds`);
+            adapter.log.info(`updateBoiler(): Got throttled ${secs} seconds`);
+            adapter.log.debug(`updateBoiler(): Rescheduling updateBoiler ${secs} seconds`);
             setTimeout(() => { updateBoiler(); },(parseInt(secs)+1)*1000);
+        } else if (error.response.status==405) {
+            adapter.log.info("updateBoiler(): Authentication expired, re-login 2");
+            loginBoiler();
         } else {
-            adapter.log.error("API returned status " + error.response.status);
+            adapter.log.error("updateBoiler(): Unexpected HTTP response code: " + error.response.status);
         }
     })
 }
 
 function getGateway() {
 
-    adapter.log.info('getGateway()');
+    adapter.log.debug('getGateway()');
 
     axios.get('https://www.ariston-net.remotethermo.com/api/v2/velis/plants', {
         headers: {
@@ -94,7 +108,7 @@ function getGateway() {
             // everything's ready now, fetch status from API
             updateBoiler();
         } else {
-            adapter.log.info("return code " + response.status);
+            adapter.log.error("getGateway(): Unexpected HTTP return code " + response.status);
         }
     }).catch(function (error) {
         if (error.response.status==429) {
@@ -102,6 +116,8 @@ function getGateway() {
             adapter.log.info(`getGateway(): Got throttled ${secs} seconds`);
             adapter.log.debug(`Rescheduling getGateway ${secs} seconds`);
             setTimeout(() => { getGateway(); },(parseInt(secs)+1)*1000);
+        } else {
+            adapter.log.error("getGateway(): Unexpected HTTP return code " + response.status);
         }
     })
 }
@@ -134,9 +150,11 @@ function updateComfortTemp(newTemp) {
       .catch(function (error) {
         if (error.response.status==429) {
             var secs=error.response.data.match(/\d+/)[0];
-            adapter.log.info(`Got throttled ${secs} seconds`);
-            adapter.log.debug(`Rescheduling updateComfortTemp ${secs} seconds`);
+            adapter.log.info(`updateComfortTemp(): Got throttled ${secs} seconds`);
+            adapter.log.debug(`updateComfortTemp(): Rescheduling ${secs} seconds`);
             setTimeout(() => { updateComfortTemp(newTemp);},(parseInt(secs)+1) * 1000);
+        } else {
+            adapter.log.error("updateComfortTemp(): Unexpected HTTP return code " + error.response.status);
         }
       });
 }
@@ -145,30 +163,32 @@ function onOff(target) {
 
     if (gw=="") return;
 
-    adapter.log.info("OnOff: " + target.toString());
+    adapter.log.debug("OnOff: " + target.toString());
 
     let url="https://www.ariston-net.remotethermo.com/api/v2/velis/slpPlantData/" +
     gw + "/switch";
-    adapter.log.info("Url: " + url);
     axios.post(url, target.toString(), {headers: {'Ar.authtoken': authToken, 'Content-Type': 'application/json'}})
     .then(function (response) {
         if (response.status==200) {
-           if (target) 
-              adapter.log.info("Boiler switched on");
-          else
-             adapter.log.info("Boiler switched off");
-        adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
-            {ack: true});
-    }
-  })
-  .catch(function (error) {
-    if (error.response.status==429) {
-        var secs=error.response.data.match(/\d+/)[0];
-        adapter.log.info(`Got throttled ${secs} seconds`);
-        adapter.log.debug(`Rescheduling onOff ${secs} seconds`);
-        setTimeout(() => { onOff(target); },(parseInt(secs)+1) * 1000);
-    }
-  });
+            if (target) {
+                adapter.log.info("Boiler switched on");
+            } else {
+                adapter.log.info("Boiler switched off");
+                adapter.setStateAsync("ariston-remotethermo.0.boiler.on",
+                    {ack: true});
+            }
+        }
+    })
+    .catch(function (error) {
+        if (error.response.status==429) {
+            var secs=error.response.data.match(/\d+/)[0];
+            adapter.log.info(`onOff(): Got throttled ${secs} seconds`);
+            adapter.log.debug(`onOff(): Rescheduling ${secs} seconds`);
+            setTimeout(() => { onOff(target); },(parseInt(secs)+1) * 1000);
+        } else {
+            adapter.log.error("onOff(): Unexpected HTTP return code " + error.response.status);
+        }
+    });
 }
 
 function boost(target) {
@@ -186,18 +206,20 @@ function boost(target) {
                 adapter.log.info("Boiler boost on");
             else
                 adapter.log.info("Boiler boost off");
-        adapter.setStateAsync("ariston-remotethermo.0.boiler.boostOn",
-            {ack: true});
-    }
-  })
-  .catch(function (error) {
-    if (error.response.status==429) {
-        var secs=error.response.data.match(/\d+/)[0];
-        adapter.log.info(`Got throttled ${secs} seconds`);
-        adapter.log.debug(`Rescheduling boost ${secs} seconds`);
-        setTimeout(() => {boost(target);},(parseInt(secs)+1) * 1000);
-    }
-  });
+                adapter.setStateAsync("ariston-remotethermo.0.boiler.boostOn",
+                    {ack: true});
+        }
+    })
+    .catch(function (error) {
+        if (error.response.status==429) {
+            var secs=error.response.data.match(/\d+/)[0];
+            adapter.log.info(`boost(): Got throttled ${secs} seconds`);
+            adapter.log.debug(`boost(): Rescheduling ${secs} seconds`);
+            setTimeout(() => {boost(target);},(parseInt(secs)+1) * 1000);
+        } else {
+            adapter.log.error("boost(): Unexpected HTTP return code " + error.response.status);
+        }
+    });
 }
 
 function loginBoiler() {
@@ -217,20 +239,20 @@ function loginBoiler() {
             appVer: "5.6.772.40151",
             appId: "com.remotethermo.aristonnet"
         }
-      })
-      .then(function (response) {
+    })
+    .then(function (response) {
         if (response.status==200 && 'token' in response.data) {
             adapter.log.info("Login Successful, got token");
             authToken=response.data.token;
             // now fetch gateway ID
             getGateway();
         }
-      })
-      .catch(function (error) {
-        adapter.log.error(error.response.data);
-      });
+    })
+    .catch(function (error) {
+            adapter.log.error("boost(): Unexpected HTTP return code " + error.response.status);
+        
+    });
 }
-
 
 /**
  * Starts the adapter instance
@@ -249,29 +271,12 @@ function startAdapter(options) {
         unload: (callback) => {
             try {
                 // Here you must clear all timeouts or intervals that may still be active
-                // clearTimeout(timeout1);
-                // clearTimeout(timeout2);
-                // ...
-                // clearInterval(interval1);
-
+                clearInterval(boilerInterval);
                 callback();
             } catch (e) {
                 callback();
             }
         },
-
-        // If you need to react to object changes, uncomment the following method.
-        // You also need to subscribe to the objects with `adapter.subscribeObjects`, similar to `adapter.subscribeStates`.
-        // objectChange: (id, obj) => {
-        //     if (obj) {
-        //         // The object was changed
-        //         adapter.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-        //     } else {
-        //         // The object was deleted
-        //         adapter.log.info(`object ${id} deleted`);
-        //     }
-        // },
-
         // is called if a subscribed state changes
         stateChange: (id, state) => {
             if (state) {
@@ -292,87 +297,20 @@ function startAdapter(options) {
                 adapter.log.info(`state ${id} deleted`);
             }
         },
-
-        // If you need to accept messages in your adapter, uncomment the following block.
-        // /**
-        //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-        //  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-        //  */
-        // message: (obj) => {
-        //     if (typeof obj === 'object' && obj.message) {
-        //         if (obj.command === 'send') {
-        //             // e.g. send email or pushover or whatever
-        //             adapter.log.info('send command');
-
-        //             // Send response in callback if required
-        //             if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-        //         }
-        //     }
-        // },
     }));
 }
 
 async function main() {
 
-    // The adapters config (in the instance object everything under the attribute "native") is accessible via
-    // adapter.config:
-    // adapter.log.info('config email: ' + adapter.config.email);
-    // adapter.log.info('config password: ' + adapter.config.password);
-
-    /*
-        For every state in the system there has to be also an object of type state
-        Here a simple template for a boolean variable named "testVariable"
-        Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-    */
-    // await adapter.setObjectNotExistsAsync('testVariable', {
-    //     type: 'state',
-    //     common: {
-    //         name: 'testVariable',
-    //         type: 'boolean',
-    //         role: 'indicator',
-    //         read: true,
-    //         write: true,
-    //     },
-    //     native: {},
-    // });
-
-
-    // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-    // adapter.subscribeStates('testVariable');
-    // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-    // adapter.subscribeStates('lights.*');
-    // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-    // adapter.subscribeStates('*');
-
-    /*
-        setState examples
-        you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-    */
-    // the variable testVariable is set to true as command (ack=false)
-    // await adapter.setStateAsync('testVariable', true);
-
-    // same thing, but the value is flagged "ack"
-    // ack should be always set to true if the value is received from or acknowledged from the target system
-    // await adapter.setStateAsync('testVariable', { val: true, ack: true });
-
-    // same thing, but the state is deleted after 30s (getState will return null afterwards)
-    // await adapter.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
-
-    // examples for the checkPassword/checkGroup functions
-    // adapter.checkPassword('admin', 'iobroker', (res) => {
-    //     adapter.log.info('check user admin pw iobroker: ' + res);
-    // });
-
-    // adapter.checkGroup('admin', 'admin', (res) => {
-    //     adapter.log.info('check group user admin group admin: ' + res);
-    // });
-
+    // subscribe changes to the following states
     adapter.subscribeStates('ariston-remotethermo.0.boiler.comfortTemp');
     adapter.subscribeStates('ariston-remotethermo.0.boiler.on');
     adapter.subscribeStates('ariston-remotethermo.0.boiler.boostOn');
 
+    // trigger initial update before scheduling the periodic one
     updateBoiler();
-    setInterval(updateBoiler,300000);
+    //
+    boilerInterval=setInterval(updateBoiler,UPDATE_PERIOD);
 }
 
 if (require.main !== module) {
