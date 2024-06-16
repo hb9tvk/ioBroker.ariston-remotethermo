@@ -103,7 +103,7 @@ function getGateway() {
         if (response.status==200) {
             gw=response.data[0].gw;
             adapter.log.info(`Got GatewayID: ${gw}`);
-            adapter.setStateAsync('ariston-remotethermo.0.boiler.gw', 
+            adapter.setStateAsync('ariston-remotethermo.0.boiler.gw',
                 {val: response.data[0].gw, ack: true});
             // everything's ready now, fetch status from API
             updateBoiler();
@@ -274,6 +274,7 @@ function startAdapter(options) {
                 clearInterval(boilerInterval);
                 callback();
             } catch (e) {
+                adapter.log && adapter.log.warn('[END 7 catch] adapter stopped ' + e);
                 callback();
             }
         },
