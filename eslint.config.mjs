@@ -1,8 +1,8 @@
-import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import globals from 'globals';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import js from '@eslint/js';
+import { FlatCompat } from '@eslint/eslintrc';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,8 +13,8 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["**/.eslintrc.js"],
-}, ...compat.extends("eslint:recommended"), {
+    ignores: ['**/.eslintrc.js'],
+}, ...compat.extends('eslint:recommended'), {
     plugins: {},
 
     languageOptions: {
@@ -24,30 +24,30 @@ export default [{
         },
 
         ecmaVersion: 2020,
-        sourceType: "module",
+        sourceType: 'module',
     },
 
     rules: {
-        indent: ["error", 4, {
+        indent: ['error', 4, {
             SwitchCase: 1,
         }],
 
-        "no-console": "off",
+        'no-console': 'off',
 
-        "no-unused-vars": ["error", {
+        'no-unused-vars': ['error', {
             ignoreRestSiblings: true,
-            argsIgnorePattern: "^_",
+            argsIgnorePattern: '^_',
         }],
 
-        "no-var": "error",
-        "no-trailing-spaces": "error",
-        "prefer-const": "error",
+        'no-var': 'error',
+        'no-trailing-spaces': 'error',
+        'prefer-const': 'error',
 
-        quotes: ["error", "single", {
+        quotes: ['error', 'single', {
             avoidEscape: true,
             allowTemplateLiterals: true,
         }],
 
-        semi: ["error", "always"],
+        semi: ['error', 'always'],
     },
 }];
