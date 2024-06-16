@@ -1,221 +1,234 @@
 {
-    "common": {
-        "name": "ariston-remotethermo",
-        "version": "0.0.1",
-        "news": {
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版"
-            }
-        },
-        "title": "Ariston Boiler",
-        "titleLang": {
-            "en": "Ariston Boiler",
-            "de": "Ariston Boiler",
-            "ru": "Ariston Boiler",
-            "pt": "Ariston Boiler",
-            "nl": "Ariston Boiler",
-            "fr": "Ariston Boiler",
-            "it": "Ariston Boiler",
-            "es": "Ariston Boiler",
-            "pl": "Ariston Boiler",
-            "zh-cn": "Ariston Boiler"
-        },
-        "desc": {
-            "en": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "de": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "ru": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "pt": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "nl": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "fr": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "it": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "es": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "pl": "Adapter for Ariston Water Heaters via Ariston-NET API",
-            "zh-cn": "Adapter for Ariston Water Heaters via Ariston-NET API"
-        },
-        "authors": [
-            "hb9tvk <peter@kohler.name>"
-        ],
-        "keywords": [
-            "boiler"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "main.js",
-        "icon": "ariston-remotethermo.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/hb9tvk/ioBroker.ariston-remotethermo/main/admin/ariston-remotethermo.png",
-        "readme": "https://github.com/hb9tvk/ioBroker.ariston-remotethermo/blob/main/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "climate-control",
-        "compact": true,
-        "connectionType": "cloud",
-        "dataSource": "poll",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=3.3.22"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.13"
-            }
-        ]
+  "common": {
+    "name": "ariston-remotethermo",
+    "version": "0.0.2",
+    "news": {
+      "0.0.2": {
+        "en": "First published version",
+        "de": "Erstveröffentlichte Fassung",
+        "ru": "Первая опубликованная версия",
+        "pt": "Primeira versão publicada",
+        "nl": "Eerste gepubliceerde versie",
+        "fr": "Première version publiée",
+        "it": "Prima versione pubblicata",
+        "es": "Primera versión publicada",
+        "pl": "Pierwsza publikowana wersja",
+        "uk": "Перший опублікований варіант",
+        "zh-cn": "第一版已发布"
+      },
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "zh-cn": "首次出版"
+      }
     },
-    "encryptedNative": [
-      "password"
-    ],
-    "protectedNative": [
-      "password"
-    ],
-    "native": {
-        "email": "",
-        "password": ""
+    "title": "Ariston Boiler",
+    "titleLang": {
+      "en": "Ariston Boiler",
+      "de": "Ariston Boiler",
+      "ru": "Ariston Boiler",
+      "pt": "Ariston Boiler",
+      "nl": "Ariston Boiler",
+      "fr": "Ariston Boiler",
+      "it": "Ariston Boiler",
+      "es": "Ariston Boiler",
+      "pl": "Ariston Boiler",
+      "zh-cn": "Ariston Boiler"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "boiler",
-            "type": "channel",
-            "common": {
-              "name": "Boiler"
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.waterTemp",
-            "type": "state",
-            "common": {
-              "name": "waterTemp",
-              "type": "number",
-              "role": "value.temperature",
-              "read": true,
-              "write": false,
-              "unit": "°C",
-              "def": 0,
-              "desc": {
-                "en": "Current Water Temperature"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.comfortTemp",
-            "type": "state",
-            "common": {
-              "name": "comfortTemp",
-              "type": "number",
-              "role": "level.temperature",
-              "read": true,
-              "write": true,
-              "unit": "°C",
-              "desc": {
-                "en": "Selected Water Temperature"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.mode",
-            "type": "state",
-            "common": {
-              "name": "mode",
-              "type": "number",
-              "role": "info.status",
-              "read": true,
-              "write": true,
-              "desc": {
-                "en": "Mode"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.opMode",
-            "type": "state",
-            "common": {
-              "name": "opMode",
-              "type": "number",
-              "role": "info.status",
-              "read": true,
-              "write": true,
-              "desc": {
-                "en": "OP Mode"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.boostOn",
-            "type": "state",
-            "common": {
-              "name": "boostOn",
-              "type": "boolean",
-              "role": "switch.mode.boost",
-              "read": true,
-              "write": true,
-              "desc": {
-                "en": "Boost"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.hpState",
-            "type": "state",
-            "common": {
-              "name": "hpState",
-              "type": "number",
-              "role": "info.status",
-              "read": true,
-              "write": false,
-              "desc": {
-                "en": "Heat Pump State"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.on",
-            "type": "state",
-            "common": {
-              "name": "on",
-              "type": "boolean",
-              "role": "switch.power",
-              "read": true,
-              "write": true,
-              "desc": {
-                "en": "On"
-              }
-            },
-            "native": {}
-        },
-        {
-            "_id": "boiler.gw",
-            "type": "state",
-            "common": {
-              "name": "gateway_id",
-              "type": "string",
-              "role": "text",
-              "read": true,
-              "write": false,
-              "desc": {
-                "en": "Gateway ID"
-              }
-            },
-            "native": {}
-        }    
+    "desc": {
+      "en": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "de": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "ru": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "pt": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "nl": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "fr": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "it": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "es": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "pl": "Adapter for Ariston Water Heaters via Ariston-NET API",
+      "zh-cn": "Adapter for Ariston Water Heaters via Ariston-NET API"
+    },
+    "authors": [
+      "hb9tvk <peter@kohler.name>"
+    ],
+    "keywords": [
+      "boiler"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "ariston-remotethermo.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/hb9tvk/ioBroker.ariston-remotethermo/main/admin/ariston-remotethermo.png",
+    "readme": "https://github.com/hb9tvk/ioBroker.ariston-remotethermo/blob/main/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "climate-control",
+    "compact": true,
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=3.3.22"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.13"
+      }
     ]
+  },
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
+  "native": {
+    "email": "",
+    "password": ""
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "boiler",
+      "type": "channel",
+      "common": {
+        "name": "Boiler"
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.waterTemp",
+      "type": "state",
+      "common": {
+        "name": "waterTemp",
+        "type": "number",
+        "role": "value.temperature",
+        "read": true,
+        "write": false,
+        "unit": "°C",
+        "def": 0,
+        "desc": {
+          "en": "Current Water Temperature"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.comfortTemp",
+      "type": "state",
+      "common": {
+        "name": "comfortTemp",
+        "type": "number",
+        "role": "level.temperature",
+        "read": true,
+        "write": true,
+        "unit": "°C",
+        "desc": {
+          "en": "Selected Water Temperature"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.mode",
+      "type": "state",
+      "common": {
+        "name": "mode",
+        "type": "number",
+        "role": "info.status",
+        "read": true,
+        "write": true,
+        "desc": {
+          "en": "Mode"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.opMode",
+      "type": "state",
+      "common": {
+        "name": "opMode",
+        "type": "number",
+        "role": "info.status",
+        "read": true,
+        "write": true,
+        "desc": {
+          "en": "OP Mode"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.boostOn",
+      "type": "state",
+      "common": {
+        "name": "boostOn",
+        "type": "boolean",
+        "role": "switch.mode.boost",
+        "read": true,
+        "write": true,
+        "desc": {
+          "en": "Boost"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.hpState",
+      "type": "state",
+      "common": {
+        "name": "hpState",
+        "type": "number",
+        "role": "info.status",
+        "read": true,
+        "write": false,
+        "desc": {
+          "en": "Heat Pump State"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.on",
+      "type": "state",
+      "common": {
+        "name": "on",
+        "type": "boolean",
+        "role": "switch.power",
+        "read": true,
+        "write": true,
+        "desc": {
+          "en": "On"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "boiler.gw",
+      "type": "state",
+      "common": {
+        "name": "gateway_id",
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "desc": {
+          "en": "Gateway ID"
+        }
+      },
+      "native": {}
+    }
+  ]
 }

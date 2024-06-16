@@ -1,6 +1,6 @@
 {
   "name": "iobroker.ariston-remotethermo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Adapter for Ariston Water Heaters via Ariston-NET API",
   "author": {
     "name": "hb9tvk",
