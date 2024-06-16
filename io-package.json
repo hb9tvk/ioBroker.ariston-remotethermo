@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "ariston-remotethermo",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "news": {
+      "0.0.3": {
+        "en": "fixed deployment",
+        "de": "feste bereitstellung",
+        "ru": "стационарное развертывание",
+        "pt": "implantação fixa",
+        "nl": "vaste inzet",
+        "fr": "déploiement fixe",
+        "it": "distribuzione fissa",
+        "es": "despliegue fijo",
+        "pl": "stałe rozmieszczenie",
+        "uk": "фіксоване розгортання",
+        "zh-cn": "固定部署"
+      },
       "0.0.2": {
         "en": "First published version",
         "de": "Erstveröffentlichte Fassung",
