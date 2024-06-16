@@ -16,7 +16,7 @@
     "url": "git@github.com:hb9tvk/ioBroker.ariston-remotethermo.git"
   },
   "engines": {
-    "node": ">= 14"
+    "node": ">= 16.0.0"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.1.6"
