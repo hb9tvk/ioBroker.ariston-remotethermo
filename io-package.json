@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "ariston-remotethermo",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "news": {
+      "0.0.4": {
+        "en": "fixing npm dependencies",
+        "de": "festlegung npm abhängigkeiten",
+        "ru": "фиксация зависимостей npm",
+        "pt": "fixando dependências npm",
+        "nl": "vast te stellen npm afhankelijkheden",
+        "fr": "fixation des dépendances npm",
+        "it": "fissaggio npm dipendenze",
+        "es": "fijación de las dependencias npm",
+        "pl": "ustalanie zależności npm",
+        "uk": "фіксація npm залежностей",
+        "zh-cn": "修正 npm 依赖性"
+      },
       "0.0.3": {
         "en": "fixed deployment",
         "de": "feste bereitstellung",
