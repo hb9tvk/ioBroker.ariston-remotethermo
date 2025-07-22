@@ -16,57 +16,6 @@
         "uk": "фіксація провисання і складання випробувань\nоновлений devenv в вузол 20.14.0",
         "zh-cn": "修复和构建测试\n更新为20.14.0节点"
       },
-      "0.0.4": {
-        "en": "fixing npm dependencies",
-        "de": "festlegung npm abhängigkeiten",
-        "ru": "фиксация зависимостей npm",
-        "pt": "fixando dependências npm",
-        "nl": "vast te stellen npm afhankelijkheden",
-        "fr": "fixation des dépendances npm",
-        "it": "fissaggio npm dipendenze",
-        "es": "fijación de las dependencias npm",
-        "pl": "ustalanie zależności npm",
-        "uk": "фіксація npm залежностей",
-        "zh-cn": "修正 npm 依赖性"
-      },
-      "0.0.3": {
-        "en": "fixed deployment",
-        "de": "feste bereitstellung",
-        "ru": "стационарное развертывание",
-        "pt": "implantação fixa",
-        "nl": "vaste inzet",
-        "fr": "déploiement fixe",
-        "it": "distribuzione fissa",
-        "es": "despliegue fijo",
-        "pl": "stałe rozmieszczenie",
-        "uk": "фіксоване розгортання",
-        "zh-cn": "固定部署"
-      },
-      "0.0.2": {
-        "en": "First published version",
-        "de": "Erstveröffentlichte Fassung",
-        "ru": "Первая опубликованная версия",
-        "pt": "Primeira versão publicada",
-        "nl": "Eerste gepubliceerde versie",
-        "fr": "Première version publiée",
-        "it": "Prima versione pubblicata",
-        "es": "Primera versión publicada",
-        "pl": "Pierwsza publikowana wersja",
-        "uk": "Перший опублікований варіант",
-        "zh-cn": "第一版已发布"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
-      }
     },
     "title": "Ariston Boiler",
     "titleLang": {
@@ -117,12 +66,12 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=3.3.22"
+        "js-controller": ">=5.0.19"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=5.1.13"
+        "admin": ">=7.4.10"
       }
     ]
   },
