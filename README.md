@@ -22,11 +22,15 @@ Upon configuration of the adapter, the email address and password for the Aristo
 
 Known working models
 
-* Domotec NUOS-III (probably same as Ariston NUOS PLUS WIFI)
+* Domotec NUOS-III (same as Ariston NUOS PLUS WI-FI 250)
 
 Polling interval: There is a rate limit on the API so it should not be polled too often. Currently the interval is hardcoded to 5min (300 sec) which seems to be ok. Might become configurable in a future release.
 
 ## Changelog
+### 0.0.6 (2025-07-22)
+
+- Major refactoring to use new R2 Web API (thanks di3t0 for the information)
+
 ### 0.0.5 (2024-06-16)
 
 - fixing lint and build tests
