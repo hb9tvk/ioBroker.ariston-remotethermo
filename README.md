@@ -55,7 +55,7 @@ Polling interval: There is a rate limit on the API so it should not be polled to
 ## License
 MIT License
 
-Copyright (c) 2024 hb9tvk <peter@kohler.name>
+Copyright (c) 2025 hb9tvk <peter@kohler.name>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
