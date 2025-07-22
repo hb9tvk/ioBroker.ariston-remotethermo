@@ -29,6 +29,8 @@ Polling interval: There is a rate limit on the API so it should not be polled to
 ## Changelog
 ### **WORK IN PROGRESS**
 
+- Major refactoring to use new R2 Web API (thanks di3t0 for the information)
+
 ### 0.0.5 (2024-06-16)
 
 - fixing lint and build tests
