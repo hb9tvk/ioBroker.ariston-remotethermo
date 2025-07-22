@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "ariston-remotethermo",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "news": {
+      "0.0.6": {
+        "en": "Major refactoring to use new R2 Web API (thanks di3t0 for the information)",
+        "de": "Wichtige Refactoring zur Verwendung neuer R2 Web API (dank di3t0 für die Informationen)",
+        "ru": "Большой рефакторинг для использования нового R2 Web API (спасибо di3t0 за информацию)",
+        "pt": "Refactoração importante para usar a nova API R2 Web (obrigado di3t0 para a informação)",
+        "nl": "Belangrijke refactoring om nieuwe R2 Web API te gebruiken (dank di3t0 voor de informatie)",
+        "fr": "Major refactoring to use new R2 Web API (merci di3t0 pour l'information)",
+        "it": "Maggiore refactoring per utilizzare la nuova R2 Web API (grazie di3t0 per le informazioni)",
+        "es": "Refactorización importante para utilizar la nueva API Web R2 (gracias di3t0 para la información)",
+        "pl": "Główne refakturowanie używać nowego API R2 Web (dzięki di3t0 za informacje)",
+        "uk": "Основні рефакторинги для використання нового R2 Web API (танки di3t0 для інформації)",
+        "zh-cn": "主要重构使用新的 R2 Web API( 感谢 dit0 信息)"
+      },
       "0.0.5": {
         "en": "fixing lint and build tests\nupdated devenv to node 20.14.0",
         "de": "befestigen von lint und bauversuchen\naktualisiert devenv zu knoten 20.14.0",

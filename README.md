@@ -27,7 +27,7 @@ Known working models
 Polling interval: There is a rate limit on the API so it should not be polled too often. Currently the interval is hardcoded to 5min (300 sec) which seems to be ok. Might become configurable in a future release.
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.0.6 (2025-07-22)
 
 - Major refactoring to use new R2 Web API (thanks di3t0 for the information)
 
