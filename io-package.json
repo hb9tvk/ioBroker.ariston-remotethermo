@@ -15,7 +15,7 @@
         "pl": "badania ściernic i konstrukcji\nzaktualizowany devenv do węzła 20.14.0",
         "uk": "фіксація провисання і складання випробувань\nоновлений devenv в вузол 20.14.0",
         "zh-cn": "修复和构建测试\n更新为20.14.0节点"
-      },
+      }
     },
     "title": "Ariston Boiler",
     "titleLang": {
