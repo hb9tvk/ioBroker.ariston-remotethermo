@@ -1,3 +1,13 @@
+## ⚠️ This adapter is no longer maintained
+
+I no longer have access to an Ariston NUOS PLUS WI-FI 250 boiler and cannot test or maintain this adapter any longer.
+Please use one of the actively maintained alternatives instead, e.g.
+
+- https://github.com/di3t0/iobroker.ariston-remotethermo-ai
+
+This repository will be archived. Feel free to fork it.
+
+
 ![Logo](admin/ariston-remotethermo.png)
 # ioBroker.ariston-remotethermo
 
